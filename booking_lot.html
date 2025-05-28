@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Parking Lot Booking</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #369eca;
+            background-size: cover;
+            text-align: center;
+            min-height: 100vh;
+        }
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            backdrop-filter: blur(10px);
+            padding: 10px 20px;
+            background-color: transparent;
+        }
+        .navbar .logo-container {
+            display: flex;
+            align-items: center;
+        }
+        .navbar .logo1 {
+            height: 100px;
+            margin-right: 15px;
+            width: 100px;
+            border-radius: 30px;
+        }
+        .navbar .logo {
+            color: #6f4e9f;
+            font-size: 2.3em;
+            font-weight: bold;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+        }
+        .navbar ul {
+            list-style: none;
+            display: flex;
+            margin: 0;
+            padding: 0;
+        }
+        .navbar ul li {
+            margin: 0 15px;
+            position: relative;
+        }
+        .navbar ul li a {
+            color: rgb(255, 255, 255);
+            text-decoration: none;
+            font-size: 1.5em;
+            transition: color 0.3s;
+            padding: 5px 10px;
+            border-radius: 5px;
+            backdrop-filter: blur(5px);
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        .navbar ul li a:hover {
+            color: #ffffff;
+            background-color: rgba(255, 255, 255, 0.3);
+        }
+        .container {
+            width: 90%;
+            max-width: 800px;
+            margin: 30px auto;
+            padding: 25px;
+            border-radius: 15px;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(12px);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            text-align: center;
+            position: relative;
+        }
+        h2 {
+            color: #fff;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        .category-container, .duration-container {
+            margin-bottom: 20px;
+            text-align: left;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 10px 15px;
+            border-radius: 10px;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        label {
+            font-weight: bold;
+            font-size: 14px;
+            color: #fff;
+            margin-right: 10px;
+        }
+        select {
+            padding: 8px 12px;
+            font-size: 14px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 5px;
+            background: rgba(255, 255, 255, 0.2);
+            color: #333;
+            backdrop-filter: blur(5px);
+            width: 100%;
+            margin-top: 5px;
+        }
+        .message {
+            font-size: 16px;
+            color: #f8d7da;
+            margin-top: 20px;
+            font-weight: bold;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 10px;
+            border-radius: 5px;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        .booking-btn, .route-btn {
+            padding: 12px 20px;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 20px;
+            font-size: 16px;
+            margin-right: 10px;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        .booking-btn {
+            background: rgba(40, 167, 69, 0.7);
+        }
+        .booking-btn:hover {
+            background: rgba(33, 136, 56, 0.8);
+        }
+        .route-btn {
+            background: rgba(0, 123, 255, 0.7);
+        }
+        .route-btn:hover {
+            background: rgba(0, 86, 179, 0.8);
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo-container">
+            <div class="logo1">
+                <img src="parking-icon-dual-tone-icon-for-your-website-mobile-presentation-and-logo-design-vector-removebg-pre.png" alt="logo" width="100px" height="100px">
+            </div>
+            <div class="logo">
+                ParkHive
+            </div>
+        </div>
+        <ul>
+            <li><a href="#" onclick="goBack()">Back</a></li>
+        </ul>
+    </nav>
+
+    <div class="container">
+        <h2>Parking Lot Booking</h2>
+
+        <div class="category-container">
+            <label for="vehicle-category">Select Vehicle Category:</label>
+            <select id="vehicle-category">
+                <option value="bike" data-cost="20">Bike - ₹20</option>
+                <option value="car" data-cost="50">Car - ₹50</option>
+                <option value="other" data-cost="70">Other - ₹70</option>
+            </select>
+        </div>
+
+        <div class="duration-container">
+            <label for="duration">Select Duration:</label>
+            <select id="duration">
+                <option value="1">1 Hour</option>
+                <option value="2">2 Hours</option>
+                <option value="6">6 Hours</option>
+                <option value="12">12 Hours</option>
+                <option value="24">Full Day</option>
+            </select>
+        </div>
+
+        <p class="message">Parking space is available, but specific slot selection is not available.</p>
+
+        <button class="booking-btn" onclick="confirmBooking()">Booking</button>
+        <button class="route-btn" onclick="handleRouteButton()">Route</button>
+    </div>
+
+    <script>
+        function goBack() {
+            const lastSearchQuery = localStorage.getItem("lastSearchQuery") || "";
+            window.location.href = `index.html?search=${encodeURIComponent(lastSearchQuery)}`;
+        }
+
+        function handleRouteButton() {
+            const bookedSlotName = localStorage.getItem("bookedSlotName");
+            const lastSearchQuery = localStorage.getItem("lastSearchQuery") || "";
+            if (bookedSlotName) {
+                window.location.href = `map.html?search=${encodeURIComponent(lastSearchQuery)}`;
+            } else {
+                alert("No parking slot booked yet.");
+            }
+        }
+
+        function confirmBooking() {
+            const vehicleCategory = document.getElementById("vehicle-category").value;
+            const duration = document.getElementById("duration").value;
+            const costPerHour = document.getElementById("vehicle-category").selectedOptions[0].dataset.cost;
+            const totalCost = costPerHour * duration;
+            const bookedSlotName = localStorage.getItem("bookedSlotName") || "Parking Lot";
+
+            localStorage.setItem('currentLotBooking', JSON.stringify({
+                vehicleCategory: vehicleCategory,
+                duration: duration,
+                location: bookedSlotName,
+                totalCost: `₹${totalCost}`,
+                timestamp: new Date().getTime()
+            }));
+
+            window.location.href = "https://razorpay.me/@smartpark1134";
+        }
+
+        window.onload = function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const searchQuery = urlParams.get('search');
+            if (searchQuery) {
+                localStorage.setItem("lastSearchQuery", searchQuery);
+            }
+        };
+    </script>
+</body>
+</html>

@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Slot Booking</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #369eca;
+            background-size: cover;
+            text-align: center;
+            min-height: 100vh;
+        }
+        .container {
+            width: 90%;
+            max-width: 800px;
+            margin: 30px auto;
+            padding: 25px;
+            border-radius: 15px;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(12px);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            text-align: center;
+            position: relative;
+        }
+        h2 {
+            color: #fff;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        .duration-container {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            margin-bottom: 15px;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 10px 15px;
+            border-radius: 10px;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .duration-container label {
+            font-weight: bold;
+            font-size: 14px;
+            margin-right: 10px;
+            color: #fff;
+        }
+        .duration-container select {
+            padding: 8px 12px;
+            font-size: 14px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 5px;
+            background: rgba(255, 255, 255, 0.2);
+            color: #333;
+            backdrop-filter: blur(5px);
+        }
+        .booking-details {
+            text-align: left;
+            margin-bottom: 20px;
+            color: #fff;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .slot-section {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+        .slot-section h3 {
+            color: #fff;
+            margin-bottom: 15px;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+        }
+        .availability {
+            font-size: 14px;
+            margin-bottom: 15px;
+            font-weight: bold;
+            color: #fff;
+        }
+        .slot-grid {
+            display: grid;
+            gap: 10px;
+            justify-content: center;
+            padding: 10px;
+        }
+        .cars .slot-grid { grid-template-columns: repeat(5, 1fr); }
+        .bikes .slot-grid { grid-template-columns: repeat(6, 1fr); }
+        .others .slot-grid { grid-template-columns: repeat(3, 1fr); }
+
+        .slot {
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            color: white;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        .cars .slot { 
+            background: rgba(0, 123, 255, 0.7);
+            border: 1px solid rgba(0, 123, 255, 0.5);
+        }
+        .bikes .slot { 
+            background: rgba(40, 167, 69, 0.7);
+            border: 1px solid rgba(40, 167, 69, 0.5);
+        }
+        .others .slot { 
+            background: rgba(255, 152, 0, 0.7);
+            border: 1px solid rgba(255, 152, 0, 0.5);
+        }
+
+        .slot:hover { 
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+        }
+        .slot.selected { 
+            background: rgba(0, 0, 0, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            transform: scale(1.05);
+        }
+        .slot.booked { 
+            background: rgba(220, 53, 69, 0.7);
+            cursor: not-allowed;
+            position: relative;
+        }
+        .slot.booked::after {
+            content: "✗";
+            position: absolute;
+            font-size: 24px;
+        }
+        .slot.reserved {
+            background: rgba(108, 117, 125, 0.7);
+            cursor: not-allowed;
+        }
+
+        .confirm-btn, .find-route-btn, .clear-selection-btn {
+            padding: 12px 20px;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 20px;
+            font-size: 16px;
+            margin-right: 10px;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        .confirm-btn { 
+            background: rgba(40, 167, 69, 0.7);
+        }
+        .confirm-btn:disabled { 
+            background: rgba(108, 117, 125, 0.7);
+            cursor: not-allowed;
+        }
+        .confirm-btn:hover:not(:disabled) { 
+            background: rgba(33, 136, 56, 0.8);
+        }
+
+        .find-route-btn { 
+            background: rgba(0, 123, 255, 0.7);
+        }
+        .find-route-btn:hover { 
+            background: rgba(0, 86, 179, 0.8);
+        }
+
+        .clear-selection-btn { 
+            background: rgba(255, 193, 7, 0.7);
+            color: #212529;
+        }
+        .clear-selection-btn:hover {
+            background: rgba(224, 168, 0, 0.8);
+        }
+
+        .total-cost {
+            font-size: 18px;
+            font-weight: bold;
+            margin-top: 15px;
+            color: #fff;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+        }
+
+        .back-btn {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            padding: 10px 20px;
+            background: rgba(0, 123, 255, 0.7);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        .back-btn:hover {
+            background: rgba(0, 86, 179, 0.8);
+        }
+        
+        .status-message {
+            margin-top: 20px;
+            padding: 10px;
+            border-radius: 5px;
+            font-weight: bold;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        .status-available {
+            color: #d4edda;
+        }
+        .status-unavailable {
+            color: #f8d7da;
+        }
+        
+        .selected-slots-info {
+            margin: 15px 0;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 5px;
+            font-size: 14px;
+            color: #fff;
+            backdrop-filter: blur(5px);
+        }
+        
+        .booking-summary {
+            background: rgba(241, 248, 255, 0.2);
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            text-align: left;
+            color: #fff;
+            backdrop-filter: blur(5px);
+        }
+        
+        .timer {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.8);
+            margin-top: 5px;
+        }
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            backdrop-filter: blur(10px);
+            padding: 10px 20px;
+            background-color: transparent;
+        }
+        .navbar .logo-container {
+            display: flex;
+            align-items: center;
+        }
+        .navbar .logo1 {
+            height: 100px;
+            margin-right: 15px;
+            width: 100px;
+            border-radius: 30px;
+        }
+        .navbar .logo {
+            color: #6f4e9f;
+            font-size: 2.3em;
+            font-weight: bold;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+        }
+        .navbar ul {
+            list-style: none;
+            display: flex;
+            margin: 0;
+            padding: 0;
+        }
+        .navbar ul li {
+            margin: 0 15px;
+            position: relative;
+        }
+        .navbar ul li a {
+            color: rgb(255, 255, 255);
+            text-decoration: none;
+            font-size: 1.5em;
+            transition: color 0.3s;
+            padding: 5px 10px;
+            border-radius: 5px;
+            backdrop-filter: blur(5px);
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        .navbar ul li a:hover {
+            color: #ffffff;
+            background-color: rgba(255, 255, 255, 0.3);
+        }
+        main {
+            flex: 1;
+            text-align: center;
+            padding: 20px;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo-container">
+            <div class="logo1">
+                <img src="parking-icon-dual-tone-icon-for-your-website-mobile-presentation-and-logo-design-vector-removebg-pre.png" alt="logo" width="100px" height="100px">
+            </div>
+            <div class="logo">
+                ParkHive
+            </div>
+        </div>
+        <ul>
+            <li><a href="#" onclick="goBack()">Back</a></li>
+        </ul>
+    </nav>
+
+    <div class="container">
+        <h2>Slot Booking</h2>
+        
+        <div id="statusMessage" class="status-message" style="display: none;"></div>
+
+        <div class="duration-container">
+            <label for="duration">Duration:</label>
+            <select id="duration">
+                <option value="1">1 Hour</option>
+                <option value="2">2 Hours</option>
+                <option value="3">3 Hours</option>
+                <option value="6">6 Hours</option>
+                <option value="12">12 Hours</option>
+                <option value="24">Full Day</option>
+                <option value="48">2 Days</option>
+                <option value="72">3 Days</option>
+                <option value="168">7 Days</option>
+            </select>
+        </div>
+
+        <div class="booking-details" id="bookingDetails">
+            <div class="booking-summary">
+                <h3>Booking Summary</h3>
+                <p><strong>Location:</strong> <span id="bookingLocation">Loading...</span></p>
+                <p><strong>Selected Duration:</strong> <span id="selectedDuration">1 Hour</span></p>
+                <div class="timer" id="selectionTimer">Selection will be held for: 05:00</div>
+            </div>
+        </div>
+        
+        <div id="selectedSlotsInfo" class="selected-slots-info" style="display: none;">
+            <strong>Selected Slots:</strong> <span id="selectedSlotsList"></span>
+        </div>
+
+        <div class="slot-section cars">
+            <h3>Car Slots (₹50 per slot)</h3>
+            <p class="availability">Available: <span id="carAvailable">20</span></p>
+            <div class="slot-grid" id="carSlots"></div>
+        </div>
+
+        <div class="slot-section bikes">
+            <h3>Bike Slots (₹20 per slot)</h3>
+            <p class="availability">Available: <span id="bikeAvailable">30</span></p>
+            <div class="slot-grid" id="bikeSlots"></div>
+        </div>
+
+        <div class="slot-section others">
+            <h3>Other Vehicles (₹70 per slot)</h3>
+            <p class="availability">Available: <span id="otherAvailable">3</span></p>
+            <div class="slot-grid" id="otherSlots"></div>
+        </div>
+
+        <p class="total-cost" id="totalCost">Total Cost: ₹0</p>
+
+        <div>
+            <button class="clear-selection-btn" id="clearSelectionBtn">Clear Selection</button>
+            <button class="confirm-btn" id="confirmBtn" disabled>Confirm Booking</button>
+            <button class="find-route-btn" id="findRouteBtn">Find Route</button>
+        </div>
+    </div>
+
+    <script>
+        let selectedSlots = [];
+        let selectionTimer = 300; // 5 minutes in seconds
+        let timerInterval;
+        const confirmBtn = document.getElementById("confirmBtn");
+        const clearSelectionBtn = document.getElementById("clearSelectionBtn");
+        const durationSelect = document.getElementById("duration");
+        const totalCostElement = document.getElementById("totalCost");
+        const statusMessage = document.getElementById("statusMessage");
+        const selectedSlotsInfo = document.getElementById("selectedSlotsInfo");
+        const selectedSlotsList = document.getElementById("selectedSlotsList");
+        const bookingLocation = document.getElementById("bookingLocation");
+        const selectedDuration = document.getElementById("selectedDuration");
+        const selectionTimerElement = document.getElementById("selectionTimer");
+        
+        function goBack() {
+            const lastSearchQuery = localStorage.getItem("lastSearchQuery") || "";
+            window.location.href = `index.html?search=${encodeURIComponent(lastSearchQuery)}`;
+        }
+
+        function initializeData() {
+            if (!localStorage.getItem('bookedSlots')) {
+                localStorage.setItem('bookedSlots', JSON.stringify({
+                    cars: [],
+                    bikes: [],
+                    others: []
+                }));
+            }
+            
+            if (!localStorage.getItem('reservedSlots')) {
+                localStorage.setItem('reservedSlots', JSON.stringify({}));
+            }
+            
+            const location = localStorage.getItem("bookedSlotName") || "Parking Location";
+            bookingLocation.textContent = location;
+            updateDurationDisplay();
+        }
+        
+        function unbookSlots() {
+            localStorage.setItem('bookedSlots', JSON.stringify({
+                cars: [],
+                bikes: [],
+                others: []
+            }));
+            localStorage.setItem('reservedSlots', JSON.stringify({}));
+            localStorage.setItem('slotBookings', JSON.stringify({}));
+            showStatusMessage("All bookings have been cleared by the developer.", "available");
+            initializePage();
+        }
+
+        function updateDurationDisplay() {
+            const durationText = durationSelect.options[durationSelect.selectedIndex].text;
+            selectedDuration.textContent = durationText;
+        }
+        
+        function startSelectionTimer() {
+            clearInterval(timerInterval);
+            selectionTimer = 300;
+            updateTimerDisplay();
+            
+            timerInterval = setInterval(() => {
+                selectionTimer--;
+                updateTimerDisplay();
+                
+                if (selectionTimer <= 0) {
+                    clearSelection();
+                    showStatusMessage('Your selection time has expired. Please select slots again.', 'unavailable');
+                    clearInterval(timerInterval);
+                }
+            }, 1000);
+        }
+        
+        function updateTimerDisplay() {
+            const minutes = Math.floor(selectionTimer / 60);
+            const seconds = selectionTimer % 60;
+            selectionTimerElement.textContent = `Selection will be held for: ${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+        
+        function updateAvailableCount() {
+            const carSlots = document.querySelectorAll('.cars .slot:not(.booked):not(.reserved)').length;
+            const bikeSlots = document.querySelectorAll('.bikes .slot:not(.booked):not(.reserved)').length;
+            const otherSlots = document.querySelectorAll('.others .slot:not(.booked):not(.reserved)').length;
+            
+            document.getElementById('carAvailable').textContent = carSlots;
+            document.getElementById('bikeAvailable').textContent = bikeSlots;
+            document.getElementById('otherAvailable').textContent = otherSlots;
+            
+            if (carSlots === 0 && bikeSlots === 0 && otherSlots === 0) {
+                showStatusMessage('All slots are currently booked. Please try again later.', 'unavailable');
+            }
+        }
+        
+        function showStatusMessage(message, type) {
+            statusMessage.textContent = message;
+            statusMessage.className = `status-message status-${type}`;
+            statusMessage.style.display = 'block';
+        }
+        
+        function hideStatusMessage() {
+            statusMessage.style.display = 'none';
+        }
+        
+        function updateSelectedSlotsInfo() {
+            if (selectedSlots.length === 0) {
+                selectedSlotsInfo.style.display = 'none';
+                return;
+            }
+            
+            selectedSlotsInfo.style.display = 'block';
+            const slotsInfo = selectedSlots.map(slot => {
+                return `${slot.type.charAt(0).toUpperCase() + slot.type.slice(1)} ${slot.number}`;
+            }).join(', ');
+            
+            selectedSlotsList.textContent = slotsInfo;
+        }
+
+        function generateSlots(container, totalSlots, pricePerHour, type) {
+            const bookedSlots = JSON.parse(localStorage.getItem('bookedSlots'));
+            const reservedSlots = JSON.parse(localStorage.getItem('reservedSlots'));
+            
+            container.innerHTML = "";
+            for (let i = 1; i <= totalSlots; i++) {
+                const slot = document.createElement("div");
+                slot.classList.add("slot");
+                slot.textContent = i;
+                slot.dataset.type = type;
+                slot.dataset.number = i;
+                slot.dataset.price = pricePerHour;
+                
+                if (bookedSlots[type].includes(i)) {
+                    slot.classList.add("booked");
+                } else if (reservedSlots[`${type}_${i}`]) {
+                    slot.classList.add("reserved");
+                }
+
+                slot.addEventListener("click", function() {
+                    if (slot.classList.contains("booked") || slot.classList.contains("reserved")) {
+                        showStatusMessage('This slot is not available. Please select another one.', 'unavailable');
+                        return;
+                    }
+                    
+                    if (slot.classList.contains("selected")) {
+                        slot.classList.remove("selected");
+                        selectedSlots = selectedSlots.filter(s => 
+                            !(s.type === type && s.number === i)
+                        );
+                    } else {
+                        slot.classList.add("selected");
+                        selectedSlots.push({
+                            type: type,
+                            number: i,
+                            price: pricePerHour
+                        });
+                        startSelectionTimer();
+                    }
+                    
+                    confirmBtn.disabled = selectedSlots.length === 0;
+                    hideStatusMessage();
+                    updateTotalCost();
+                    updateSelectedSlotsInfo();
+                });
+
+                container.appendChild(slot);
+            }
+        }
+
+        function updateTotalCost() {
+            const duration = parseInt(durationSelect.value);
+            let total = 0;
+            
+            selectedSlots.forEach(slot => {
+                total += duration * slot.price;
+            });
+            
+            totalCostElement.textContent = `Total Cost: ₹${total}`;
+        }
+        
+        function clearSelection() {
+            document.querySelectorAll('.slot.selected').forEach(slot => {
+                slot.classList.remove('selected');
+            });
+            
+            selectedSlots = [];
+            confirmBtn.disabled = true;
+            updateTotalCost();
+            updateSelectedSlotsInfo();
+            clearInterval(timerInterval);
+            selectionTimerElement.textContent = "Selection will be held for: 05:00";
+        }
+
+        function initializePage() {
+            initializeData();
+            
+            generateSlots(document.getElementById("carSlots"), 20, 50, 'cars');
+            generateSlots(document.getElementById("bikeSlots"), 30, 20, 'bikes');
+            generateSlots(document.getElementById("otherSlots"), 3, 70, 'others');
+            
+            updateAvailableCount();
+            
+            durationSelect.addEventListener("change", () => {
+                updateTotalCost();
+                updateDurationDisplay();
+                if (durationSelect.value === "unbookdev") {
+                    unbookSlots();
+                    durationSelect.value = "1";
+                }
+            });
+            
+            clearSelectionBtn.addEventListener("click", clearSelection);
+            confirmBtn.addEventListener("click", confirmBooking);
+            document.getElementById("findRouteBtn").addEventListener("click", findRoute);
+            
+            checkPaymentStatus();
+        }
+        
+        function confirmBooking() {
+            if (selectedSlots.length === 0) return;
+            
+            const bookedSlotName = localStorage.getItem("bookedSlotName") || "Parking Slot";
+            const bookedSlots = JSON.parse(localStorage.getItem('bookedSlots'));
+            
+            const reservedSlots = JSON.parse(localStorage.getItem('reservedSlots'));
+            selectedSlots.forEach(slot => {
+                reservedSlots[`${slot.type}_${slot.number}`] = new Date().getTime();
+            });
+            localStorage.setItem('reservedSlots', JSON.stringify(reservedSlots));
+            
+            localStorage.setItem('currentBooking', JSON.stringify({
+                slots: selectedSlots,
+                duration: durationSelect.value,
+                location: bookedSlotName,
+                totalCost: totalCostElement.textContent,
+                timestamp: new Date().getTime()
+            }));
+            
+            window.location.href = "https://razorpay.me/@smartpark1134";
+        }
+        
+        function findRoute() {
+            const bookedSlotName = localStorage.getItem("bookedSlotName");
+            const lastSearchQuery = localStorage.getItem("lastSearchQuery") || "";
+            if (bookedSlotName) {
+                window.location.href = `map.html?search=${encodeURIComponent(lastSearchQuery)}`;
+            } else {
+                alert("No parking slot booked yet.");
+            }
+        }
+        
+        function checkPaymentStatus() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const paymentStatus = urlParams.get('payment');
+            
+            if (paymentStatus === 'success') {
+                const booking = JSON.parse(localStorage.getItem('currentBooking'));
+                const bookedSlots = JSON.parse(localStorage.getItem('bookedSlots'));
+                const reservedSlots = JSON.parse(localStorage.getItem('reservedSlots'));
+                const slotBookings = JSON.parse(localStorage.getItem('slotBookings'));
+                
+                booking.slots.forEach(slot => {
+                    if (!bookedSlots[slot.type].includes(slot.number)) {
+                        bookedSlots[slot.type].push(slot.number);
+                    }
+                    delete reservedSlots[`${slot.type}_${slot.number}`];
+                });
+                
+                // Update slotBookings count for the location
+                const location = booking.location;
+                slotBookings[location] = (slotBookings[location] || 0) + booking.slots.length;
+                localStorage.setItem('slotBookings', JSON.stringify(slotBookings));
+                
+                localStorage.setItem('bookedSlots', JSON.stringify(bookedSlots));
+                localStorage.setItem('reservedSlots', JSON.stringify(reservedSlots));
+                
+                showStatusMessage('Booking confirmed! Thank you for your payment.', 'available');
+                clearSelection(); // Reset UI after successful booking
+            } else if (paymentStatus === 'failed') {
+                const booking = JSON.parse(localStorage.getItem('currentBooking'));
+                const reservedSlots = JSON.parse(localStorage.getItem('reservedSlots'));
+                
+                if (booking && booking.slots) {
+                    booking.slots.forEach(slot => {
+                        delete reservedSlots[`${slot.type}_${slot.number}`];
+                    });
+                    localStorage.setItem('reservedSlots', JSON.stringify(reservedSlots));
+                }
+                
+                showStatusMessage('Payment failed. Please try again.', 'unavailable');
+            }
+            
+            cleanExpiredReservations();
+        }
+        
+        function cleanExpiredReservations() {
+            const reservedSlots = JSON.parse(localStorage.getItem('reservedSlots'));
+            const now = new Date().getTime();
+            const tenMinutes = 10 * 60 * 1000;
+            
+            for (const [key, timestamp] of Object.entries(reservedSlots)) {
+                if (now - timestamp > tenMinutes) {
+                    delete reservedSlots[key];
+                }
+            }
+            
+            localStorage.setItem('reservedSlots', JSON.stringify(reservedSlots));
+        }
+
+        window.onload = initializePage;
+
+        durationSelect.insertAdjacentHTML('beforeend', '<option value="unbookdev" style="display: none;">Unbook All (Dev)</option>');
+    </script>
+</body>
+</html>
